@@ -1,6 +1,6 @@
 # homebrew-spectra
 
-Homebrew tap for [Spectra](https://github.com/kaochenlong/spectra-app).
+Homebrew tap for [Spectra](https://github.com/kaochenlong/spectra-app). Learn more at [Spectra with OpenSpec](https://kaochenlong.com/spectra-with-openspec).
 
 ## Installation
 

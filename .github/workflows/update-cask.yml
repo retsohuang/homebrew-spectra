@@ -1,0 +1,63 @@
+name: Update Spectra Cask
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # Daily at 08:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest release version
+        id: latest
+        run: |
+          VERSION=$(gh release view --repo kaochenlong/spectra-app --json tagName -q '.tagName' | sed 's/^v//')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current cask version
+        id: current
+        run: |
+          VERSION=$(grep -m1 'version "' Casks/spectra.rb | sed 's/.*version "//;s/"//')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Update cask if version changed
+        if: steps.latest.outputs.version != steps.current.outputs.version
+        run: |
+          VERSION="${{ steps.latest.outputs.version }}"
+
+          # Download both DMGs and compute SHA256
+          curl -sL "https://github.com/kaochenlong/spectra-app/releases/download/v${VERSION}/Spectra_${VERSION}_aarch64.dmg" -o arm.dmg
+          curl -sL "https://github.com/kaochenlong/spectra-app/releases/download/v${VERSION}/Spectra_${VERSION}_x64.dmg" -o intel.dmg
+
+          SHA_ARM=$(shasum -a 256 arm.dmg | awk '{print $1}')
+          SHA_INTEL=$(shasum -a 256 intel.dmg | awk '{print $1}')
+
+          CURRENT_VERSION="${{ steps.current.outputs.version }}"
+
+          # Update version
+          sed -i "s/version \"${CURRENT_VERSION}\"/version \"${VERSION}\"/" Casks/spectra.rb
+
+          # Update SHA256 for ARM (first occurrence)
+          sed -i "0,/sha256 \"[a-f0-9]\{64\}\"/s//sha256 \"${SHA_ARM}\"/" Casks/spectra.rb
+
+          # Update SHA256 for Intel (second occurrence)
+          sed -i "/on_intel/,/end/{s/sha256 \"[a-f0-9]\{64\}\"/sha256 \"${SHA_INTEL}\"/}" Casks/spectra.rb
+
+          rm -f arm.dmg intel.dmg
+
+      - name: Commit and push
+        if: steps.latest.outputs.version != steps.current.outputs.version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/spectra.rb
+          git commit -m "Update Spectra to ${{ steps.latest.outputs.version }}"
+          git push

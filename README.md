@@ -1,6 +1,6 @@
 # homebrew-spectra
 
-Homebrew tap for [Spectra](https://github.com/kaochenlong/spectra-app). Learn more at [Spectra with OpenSpec](https://kaochenlong.com/spectra-with-openspec).
+Homebrew tap for [Spectra](https://github.com/kaochenlong/spectra-app).
 
 ## Installation
 
@@ -19,3 +19,8 @@ To check manually:
 brew livecheck spectra
 brew upgrade --cask spectra
 ```
+
+## Related Links
+
+- [Spectra：給 OpenSpec 的圖形介面](https://kaochenlong.com/spectra-with-openspec)
+- [Spectra 2.0](https://kaochenlong.com/spectra-app-2)

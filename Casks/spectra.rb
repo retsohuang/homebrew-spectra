@@ -1,13 +1,13 @@
 cask "spectra" do
-  version "2.1.0"
+  version "2.1.6"
 
   on_arm do
-    sha256 "3bd53f8ce61587dfbdd1a192054e0340c42b458248fe5162e1d7b5da771cc8b0"
+    sha256 "bea053b21c92c84047f7699a55efbe5bd60ff870620d4fe4956685ca78c23be6"
     url "https://github.com/kaochenlong/spectra-app/releases/download/v#{version}/Spectra_#{version}_aarch64.dmg"
   end
 
   on_intel do
-    sha256 "2baa88fe73a9cb840d06503ae468ca3056a2971ce519b094df7b9fcbab022e6c"
+    sha256 "91f5deb1ed36cbc0d4a95bae05ead8fd29f3d3ce7c60d1d19456e4196a53d52e"
     url "https://github.com/kaochenlong/spectra-app/releases/download/v#{version}/Spectra_#{version}_x64.dmg"
   end
 
